@@ -8,3 +8,4 @@ D:\NAM 4 KY 1\CS_DU_LIEU_DPT\CS_DL_DPT\CS_DL_DPT\obj\Debug\CS_DL_DPT.csproj.Core
 D:\NAM 4 KY 1\CS_DU_LIEU_DPT\CS_DL_DPT\CS_DL_DPT\obj\Debug\CS_DL_DPT.exe
 D:\NAM 4 KY 1\CS_DU_LIEU_DPT\CS_DL_DPT\CS_DL_DPT\obj\Debug\CS_DL_DPT.pdb
 D:\NAM 4 KY 1\CS_DU_LIEU_DPT\CS_DL_DPT\CS_DL_DPT\obj\Debug\CS_DL_DPT.Form.resources
+D:\NAM 4 KY 1\CS_DU_LIEU_DPT\CS_DL_DPT\CS_DL_DPT\obj\Debug\CS_DL_DPT.csproj.ResolveComReference.cache

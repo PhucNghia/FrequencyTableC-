@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace CS_DL_DPT
 {
@@ -19,9 +20,9 @@ namespace CS_DL_DPT
 
         private void FormCSDLDPT_Load(object sender, EventArgs e)
         {
-            setRowColumHeader(dgvIn, 6, 6);
-            setRowColumHeader(dgvOut1, 6, 6);
-            setRowColumHeader(dgvOut2, 6, 6);
+            setRowColumnHeader(dgvIn, 6, 6);
+            setRowColumnHeader(dgvOut1, 6, 6);
+            setRowColumnHeader(dgvOut2, 6, 6);
             setValueToCells(dgvIn, input());
         }
 
@@ -32,24 +33,24 @@ namespace CS_DL_DPT
             for (int i = 0; i < 5; i++)
                 array[i] = new double[6];
 
-            array[0][0] = 615;  array[0][1] = 390;  array[0][2] = 10;
-            array[0][3] = 10;   array[0][4] = 18;   array[0][5] = 65;
+            array[0][0] = 615; array[0][1] = 390; array[0][2] = 10;
+            array[0][3] = 10; array[0][4] = 18; array[0][5] = 65;
 
-            array[1][0] = 15;   array[1][1] = 4;    array[1][2] = 76;
-            array[1][3] = 217;  array[1][4] = 91;   array[1][5] = 816;
+            array[1][0] = 15; array[1][1] = 4; array[1][2] = 76;
+            array[1][3] = 217; array[1][4] = 91; array[1][5] = 816;
 
-            array[2][0] = 2;    array[2][1] = 8;    array[2][2] = 815;
-            array[2][3] = 142;  array[2][4] = 765;  array[2][5] = 1;
+            array[2][0] = 2; array[2][1] = 8; array[2][2] = 815;
+            array[2][3] = 142; array[2][4] = 765; array[2][5] = 1;
 
-            array[3][0] = 312;  array[3][1] = 511;  array[3][2] = 677;
-            array[3][3] = 11;   array[3][4] = 711;  array[3][5] = 2;
+            array[3][0] = 312; array[3][1] = 511; array[3][2] = 677;
+            array[3][3] = 11; array[3][4] = 711; array[3][5] = 2;
 
-            array[4][0] = 45;   array[4][1] = 33;   array[4][2] = 516;
-            array[4][3] = 64;   array[4][4] = 491;  array[4][5] = 59;
+            array[4][0] = 45; array[4][1] = 33; array[4][2] = 516;
+            array[4][3] = 64; array[4][4] = 491; array[4][5] = 59;
 
             return array;
         }
-        
+
         //============================ KHỞI TẠO BẢNG ===============================
 
         // Button input row and column
@@ -61,7 +62,7 @@ namespace CS_DL_DPT
             {
                 row = int.Parse(txtRow.Text);
                 col = int.Parse(txtCol.Text);
-                if(row <= 0 || col <= 0)
+                if (row <= 0 || col <= 0)
                     check = -1;
                 if (row > 5000 || col > 1000)
                     check = 0;
@@ -75,24 +76,29 @@ namespace CS_DL_DPT
                 resetDgv(dgvIn);
                 resetDgv(dgvOut1);
                 resetDgv(dgvOut2);
-                setRowColumHeader(dgvIn, row, col);
-                setRowColumHeader(dgvOut1, row, col);
-                setRowColumHeader(dgvOut2, row, col);
+                setRowColumnHeader(dgvIn, row, col);
+                setRowColumnHeader(dgvOut1, row, col);
+                setRowColumnHeader(dgvOut2, row, col);
             }
-            else if(check == -1)
-                MessageBox.Show("Hàng và cột phải là số nguyên dương > 0");
+            else if (check == -1)
+                MessageBox.Show("Hàng và cột phải là số nguyên dương > 0", "Thông báo", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             else
-                MessageBox.Show("Giới hạn hàng <= 5000 và cột <= 1000");
+                MessageBox.Show("Giới hạn hàng <= 5000 và cột <= 1000", "Thông báo", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
         }
 
         // Format Row and Column header
-        private void setRowColumHeader(DataGridView dgv, int row, int col)
+        private void setRowColumnHeader(DataGridView dgv, int row, int col)
         {
             // Add column header
-            try { dgv.ColumnCount = col; }
-            catch
+            try
             {
-                MessageBox.Show((dgv.ColumnCount - 1).ToString() + "  row: " + (dgv.RowCount - 1).ToString());
+                dgv.ColumnCount = col;
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Error set Column count for DataGridView!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             for (int i = 0; i < col; i++)
             {
@@ -109,7 +115,7 @@ namespace CS_DL_DPT
             }
             dgv.AllowUserToAddRows = false;
         }
-        
+
         //===================== XỬ LÝ GET - SET DL TRONG BẢNG ======================
 
         // Set value to Cells
@@ -143,7 +149,7 @@ namespace CS_DL_DPT
                 flagError = -1;
                 return null;
             }
-            
+
             rowError = new int[row * column];
             colError = new int[column * column];
             indexError = 0;
@@ -155,7 +161,7 @@ namespace CS_DL_DPT
                         dgvIn.Rows[i].Cells[j].Style.ForeColor = Color.Black;
                         dgvIn.Rows[i].Cells[j].Style.BackColor = Color.Ivory;
                         string s = dgv.Rows[i].Cells[j].Value.ToString();
-                        kq[i][j] = double.Parse(s);
+                        kq[i][j] = int.Parse(s);
                         if (kq[i][j] < 0)
                         {
                             check = false;
@@ -184,7 +190,7 @@ namespace CS_DL_DPT
         // Button submit
         private void btnSubmit_Click(object sender, EventArgs e)
         {
-            
+
             int row = dgvIn.RowCount;
             int column = dgvIn.ColumnCount;
             int flagError;
@@ -207,11 +213,13 @@ namespace CS_DL_DPT
                         dgvIn.Rows[rowError[i]].Cells[colError[i]].Style.BackColor = Color.IndianRed;
                         dgvIn.Rows[rowError[i]].Cells[colError[i]].Style.ForeColor = Color.White;
                     }
-                    MessageBox.Show("Bạn phải nhập số dương vào các ô sai");
+                    MessageBox.Show("Bạn phải nhập số nguyên dương vào các ô sai", "Thông báo", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
                 }
-                if(flagError == -1)
+                if (flagError == -1)
                 {
-                    MessageBox.Show("Số dòng và số cột phải lớn hơn 0");
+                    MessageBox.Show("Số dòng và số cột phải lớn hơn 0", "Thông báo", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
                 }
             }
         }
@@ -355,10 +363,10 @@ namespace CS_DL_DPT
 
             for (int i = 0; i < column; i++)
             {
-                double idf =0;
+                double idf = 0;
                 for (int j = 0; j < row; j++)
-                    idf += data[j][i]; 
-                tanSo[i] = + idf;
+                    idf += data[j][i];
+                tanSo[i] = +idf;
             }
 
             for (int i = 0; i < column; i++)
@@ -382,7 +390,7 @@ namespace CS_DL_DPT
             {
                 int dem = 0;
                 for (int j = 0; j < column; j++)
-                    if(data[i][j] == 0)
+                    if (data[i][j] == 0)
                         dem++;
                 doQuanTrong[i] = Math.Round(Math.Log10((float)column / (column - dem)), 2);
             }
@@ -392,6 +400,8 @@ namespace CS_DL_DPT
 
             return kq;
         }
+
+        // Set giới hạn số lượng cho cột
 
         private void dgvIn_ColumnAdded(object sender, DataGridViewColumnEventArgs e)
         {
@@ -406,6 +416,156 @@ namespace CS_DL_DPT
         private void dgvOut2_ColumnAdded(object sender, DataGridViewColumnEventArgs e)
         {
             e.Column.FillWeight = 10;
+        }
+
+        // ================ XỬ LÝ IMPORT - EXPORT DỮ LIỆU SANG EXCEL ===============
+
+        // Xử lý Import
+        private void btnImport_Click(object sender, EventArgs e)
+        {
+            resetDgv(dgvOut1);
+            resetDgv(dgvOut2);
+
+            OpenFileDialog fopen = new OpenFileDialog();    // Tạo đối tượng mở tập tin
+            fopen.Filter = "(Tất cả các tệp)|*.*|(Các tệp excel)|*.xlsx";   // Chỉ ra chuỗi
+            fopen.ShowDialog();
+            if (fopen.FileName != "")
+            {
+                txtImportPath.Text = fopen.FileName;
+                Excel.Application app = new Excel.Application();    // Tạo đối tượng Exel
+                Excel.Workbook wb = app.Workbooks.Open(fopen.FileName);     // Mở tệp Exel
+                double[][] array;       // Mảng lưu giá trị trong Excel
+
+                try
+                {
+                    Excel._Worksheet sheet = wb.Sheets[1];  // Lựa chọn sheet
+                    Excel.Range range = sheet.UsedRange;    // Tham chiếu đến tất cả vùng dl có trong sheet
+
+                    // Xuất ra mảng
+                    int rows = range.Rows.Count;
+                    int cols = range.Columns.Count;
+                    array = new double[rows - 1][];
+                    for (int i = 0; i < rows - 1; i++)
+                        array[i] = new double[cols - 1];
+   
+                    for (int r = 2; r <= rows; r++)
+                        for (int c = 2; c <= cols; c++)
+                            array[r - 2][c - 2] = double.Parse(range.Cells[r, c].Value.ToString());
+
+                    setRowColumnHeader(dgvIn, rows - 1, cols - 1);   // Phải trừ dòng Header và cột Header ở Excel
+                    setRowColumnHeader(dgvOut1, rows - 1, cols - 1);
+                    setRowColumnHeader(dgvOut2, rows - 1, cols - 1);
+                    
+                    setValueToCells(dgvIn, array);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Thông báo", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                }
+                finally
+                {
+                    app.Quit();
+                    wb = null;
+                }
+            }
+            else
+            {
+                MessageBox.Show("Bạn không chọn tệp tin nào!", "Thông báo", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
+        }
+
+        // Xử lý Export
+        private void button2_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog fsave = new SaveFileDialog();    // Tạo đối tượng lưu tập tin
+            fsave.Filter = "(Tất cả các tệp)|*.*|(Các tệp excel)|*.xlsx";   // Chỉ ra chuỗi
+            fsave.ShowDialog();
+            if (fsave.FileName != "")
+            {
+                Excel.Application app = new Excel.Application();    // Tạo Excel App
+                Excel.Workbook wb = app.Workbooks.Add(Type.Missing);    // Tạo 1 workbook
+                //Excel.Workbook wb2 = app.Workbooks.Add(Type.Missing);    // Tạo 1 workbook
+                Excel.Worksheet sheet1 = null;   // Tạo sheet
+                Excel.Worksheet sheet2 = null;
+                try
+                {
+                    // Đọc dl từ dataGridView
+                    sheet1 = wb.Sheets.Add();
+                    sheet1 = wb.ActiveSheet;
+                    sheet1.Name = "Bảng tần suất sau chuẩn hóa";
+                    exportExcel(dgvOut1, sheet1, "Bảng tần số sau chuẩn hóa");
+
+                    sheet2 = wb.Sheets.Add();
+                    sheet2 = wb.ActiveSheet;
+                    sheet2.Name = "Bảng vector trọng số";
+                    exportExcel(dgvOut2, sheet2, "Bảng vector trọng số");
+
+                    // Save lại
+                    wb.SaveAs(fsave.FileName);
+                    MessageBox.Show("Lưu thành công!", "Thông báo", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Không có dữ liệu", "Thông báo", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                }
+                finally
+                {
+                    app.Quit();
+                    wb = null;
+                }
+            }
+            else
+            {
+                MessageBox.Show("Bạn chưa ghi tập tin!", "Thông báo", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
+        }
+
+        private static void exportExcel(DataGridView dgv, Excel.Worksheet sheet, string tableName)
+        {
+            int column = dgv.ColumnCount;   // Lấy số cột của dgvOut1 or dgvOut2 => 6
+            int row = dgv.RowCount;     // 5
+            // Gộp các ô từ [1, 1] đến [1, column+1] lại với nhau để đặt tên bảng. Cộng thêm 1 là do dgv + thêm column header
+            sheet.Range[sheet.Cells[1, 1], sheet.Cells[1, column + 1]].Merge();
+            sheet.Cells[1, 1].Value = tableName;
+            sheet.Cells[1, 1].Font.Bold = true;
+            sheet.Cells[1, 1].Font.Size = 20;
+            sheet.Cells[1, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;   // Căn giữa
+
+            // Sinh tiêu đề
+            for (int i = 0; i <= column; i++)
+            {
+                if (i == 0)
+                    sheet.Cells[3, 1] = "";
+                else
+                    sheet.Cells[3, i + 1] = dgv.Columns[i - 1].HeaderCell.Value.ToString();
+                sheet.Cells[3, i + 1].Font.Bold = true;
+                sheet.Cells[3, i + 1].Font.Size = 14;
+                sheet.Cells[3, i + 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                sheet.Cells[3, i + 1].Borders.Weight = Excel.XlBorderWeight.xlThin; // Kẻ ô
+            }
+
+            // Sinh dữ liệu
+            for (int i = 0; i < row; i++)
+            {
+                sheet.Cells[i + 4, 1] = dgv.Rows[i].HeaderCell.Value.ToString();
+                sheet.Cells[i + 4, 1].Font.Bold = true;
+                sheet.Cells[i + 4, 1].Font.Size = 14;
+                sheet.Cells[i + 4, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                sheet.Cells[i + 4, 1].Borders.Weight = Excel.XlBorderWeight.xlThin;
+
+                for (int j = 0; j < column; j++)
+                {
+                    sheet.Cells[i + 4, j + 2] = dgv.Rows[i].Cells[j].Value.ToString();
+                    sheet.Cells[i + 4, j + 2].Font.Bold = true;
+                    sheet.Cells[i + 4, j + 2].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                    sheet.Cells[i + 4, j + 2].Borders.Weight = Excel.XlBorderWeight.xlThin;
+                }
+            }
         }
     }
 }
