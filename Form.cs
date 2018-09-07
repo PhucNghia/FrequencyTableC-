@@ -20,9 +20,9 @@ namespace CS_DL_DPT
 
         private void FormCSDLDPT_Load(object sender, EventArgs e)
         {
-            setRowColumnHeader(dgvIn, 6, 6);
-            setRowColumnHeader(dgvOut1, 6, 6);
-            setRowColumnHeader(dgvOut2, 6, 6);
+            setRowColumnHeader(dgvIn, 6, 6, null, null);
+            setRowColumnHeader(dgvOut1, 6, 6, null, null);
+            setRowColumnHeader(dgvOut2, 6, 6, null, null);
             setValueToCells(dgvIn, input());
         }
 
@@ -73,12 +73,15 @@ namespace CS_DL_DPT
             }
             if (check == 1)
             {
-                resetDgv(dgvIn);
                 resetDgv(dgvOut1);
                 resetDgv(dgvOut2);
-                setRowColumnHeader(dgvIn, row, col);
-                setRowColumnHeader(dgvOut1, row, col);
-                setRowColumnHeader(dgvOut2, row, col);
+                if (checkRadio(rdoTB1))
+                {
+                    resetDgv(dgvIn);
+                    setRowColumnHeader(dgvIn, row, col, null, null);
+                }
+                setRowColumnHeader(dgvOut1, row, col, null, null);
+                setRowColumnHeader(dgvOut2, row, col, null, null);
             }
             else if (check == -1)
                 MessageBox.Show("Hàng và cột phải là số nguyên dương > 0", "Thông báo", MessageBoxButtons.OK,
@@ -89,21 +92,15 @@ namespace CS_DL_DPT
         }
 
         // Format Row and Column header
-        private void setRowColumnHeader(DataGridView dgv, int row, int col)
+        private void setRowColumnHeader(DataGridView dgv, int row, int col, string[] colHeader, string[] rowHeader)
         {
             // Add column header
-            try
-            {
-                dgv.ColumnCount = col;
-            }
-            catch(Exception ex)
-            {
-                MessageBox.Show("Error set Column count for DataGridView!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            dgv.ColumnCount = col;
             for (int i = 0; i < col; i++)
             {
                 dgv.Columns[i].Width = 75;
-                dgv.Columns[i].Name = "D" + (i + 1).ToString();
+                dgv.Columns[i].SortMode = DataGridViewColumnSortMode.Programmatic;
+                dgv.Columns[i].Name = colHeader == null? "D" + (i + 1).ToString() : colHeader[i];
             }
 
             // Add row header
@@ -111,7 +108,10 @@ namespace CS_DL_DPT
             for (int i = 0; i < row; i++)
             {
                 dgv.Rows[i].Height = 30;
-                dgv.Rows[i].HeaderCell.Value = "T" + (i + 1).ToString();
+                if(dgv.Name == "dgvOut2")
+                    dgv.Rows[i].HeaderCell.Value = "";
+                else
+                    dgv.Rows[i].HeaderCell.Value = rowHeader == null? "T" + (i + 1).ToString() : rowHeader[i];
             }
             dgv.AllowUserToAddRows = false;
         }
@@ -125,7 +125,10 @@ namespace CS_DL_DPT
             int column = dgv.ColumnCount;
             for (int i = 0; i < row; i++)
                 for (int j = 0; j < column; j++)
+                {
+                    dgv.Rows[i].Cells[j].Style.ForeColor = Color.Black;
                     dgv.Rows[i].Cells[j].Value = array[i][j].ToString();
+                }
         }
 
         // Khởi tạo những dòng và cột bị lỗi
@@ -158,10 +161,10 @@ namespace CS_DL_DPT
                 {
                     try
                     {
-                        dgvIn.Rows[i].Cells[j].Style.ForeColor = Color.Black;
-                        dgvIn.Rows[i].Cells[j].Style.BackColor = Color.Ivory;
+                        dgv.Rows[i].Cells[j].Style.ForeColor = Color.Black;
+                        dgv.Rows[i].Cells[j].Style.BackColor = Color.Ivory;
                         string s = dgv.Rows[i].Cells[j].Value.ToString();
-                        kq[i][j] = int.Parse(s);
+                        kq[i][j] =  checkRadio(rdoTB1)? int.Parse(s) : Double.Parse(s);
                         if (kq[i][j] < 0)
                         {
                             check = false;
@@ -185,33 +188,109 @@ namespace CS_DL_DPT
             return kq;
         }
 
+        // ============================= XỬ LÝ LỰA CHON BẢNG =========================================
+
+        private void rdoTB1_MouseHover(object sender, EventArgs e)
+        {
+            ToolTip tt = new ToolTip();
+            tt.SetToolTip(rdoTB1, "Bảng tần số");
+        }
+
+        private void rdoTB2_MouseHover(object sender, EventArgs e)
+        {
+            ToolTip tt = new ToolTip();
+            tt.SetToolTip(rdoTB2, "Bảng tần số sau chuẩn hóa");
+        }
+
+        private static void disabledTable(DataGridView dgvIn, DataGridView dgvOut1, DataGridView dgvOut2)
+        {
+            for (int i = 0; i < dgvIn.RowCount; i++)
+                for (int j = 0; j < dgvIn.ColumnCount; j++)
+                {
+                    dgvIn.Rows[i].Cells[j].Value = "";
+                    dgvOut1.Rows[i].Cells[j].Value = "";
+                    dgvOut2.Rows[i].Cells[j].Value = "";
+                    dgvIn.Rows[i].Cells[j].Style.BackColor = Color.LightGray;
+                }
+
+            dgvIn.ReadOnly = true;
+            dgvIn.DefaultCellStyle.SelectionBackColor = Color.LightGray;
+
+            dgvOut1.ReadOnly = false;
+            dgvOut1.DefaultCellStyle.SelectionBackColor = Color.Moccasin;
+        }
+        
+        private static void enabledTable(DataGridView dgvIn, DataGridView dgvOut1, DataGridView dgvOut2)
+        {
+            for (int i = 0; i < dgvIn.RowCount; i++)
+                for (int j = 0; j < dgvIn.ColumnCount; j++)
+                {
+                    dgvIn.Rows[i].Cells[j].Value = "";
+                    dgvOut1.Rows[i].Cells[j].Value = "";
+                    dgvOut2.Rows[i].Cells[j].Value = "";
+                    dgvIn.Rows[i].Cells[j].Style.BackColor = Color.Ivory;
+                    dgvOut1.Rows[i].Cells[j].Style.BackColor = Color.Ivory;
+                }
+
+            dgvIn.ReadOnly = false;
+            dgvIn.DefaultCellStyle.SelectionBackColor = Color.Moccasin;
+
+            dgvOut1.ReadOnly = true;
+            dgvOut1.DefaultCellStyle.SelectionBackColor = Color.PaleTurquoise;
+        }
+
+        private static bool checkRadio(RadioButton rdo)
+        {
+            return rdo.Checked;
+        }
+
+        private void rdoTB1_CheckedChanged(object sender, EventArgs e)
+        {
+            bool valRadioBT = rdoTB1.Checked;      // DataGridView Input
+            if (!valRadioBT)
+                disabledTable(dgvIn, dgvOut1, dgvOut2);
+            else
+                enabledTable(dgvIn, dgvOut1, dgvOut2);
+        }
         //===================== XỬ LÝ BUTTON ======================
 
         // Button submit
         private void btnSubmit_Click(object sender, EventArgs e)
         {
-
             int row = dgvIn.RowCount;
             int column = dgvIn.ColumnCount;
             int flagError;
-            double[][] dlVao = getValueForCells(dgvIn, out flagError);
+            double[][] dlVao;
+            dlVao = checkRadio(rdoTB1)? getValueForCells(dgvIn, out flagError) : 
+                    getValueForCells(dgvOut1, out flagError);
 
             if (dlVao != null)
             {
-                double[][] kqChuanHoa = chuanHoa(dlVao);
-                double[][] vectorTrongSo = timVetorTrongSo(kqChuanHoa);
+                double[][] kqChuanHoa = null;
+                double[][] vectorTrongSo = null;
 
-                setValueToCells(dgvOut1, kqChuanHoa);
-                setValueToCells(dgvOut2, vectorTrongSo);
+                if (checkRadio(rdoTB1))
+                {
+                    kqChuanHoa = chuanHoa(dlVao);
+                    vectorTrongSo = timVetorTrongSo(kqChuanHoa);
+                    setValueToCells(dgvOut1, kqChuanHoa);
+                    setValueToCells(dgvOut2, vectorTrongSo);
+                }
+                else
+                {
+                    vectorTrongSo = timVetorTrongSo(dlVao);
+                    setValueToCells(dgvOut2, vectorTrongSo);
+                }
             }
             else
             {
                 if (flagError == 1)
                 {
+                    DataGridView dgv = checkRadio(rdoTB1) ? dgvIn : dgvOut1;
                     for (int i = 0; i < indexError; i++)
                     {
-                        dgvIn.Rows[rowError[i]].Cells[colError[i]].Style.BackColor = Color.IndianRed;
-                        dgvIn.Rows[rowError[i]].Cells[colError[i]].Style.ForeColor = Color.White;
+                        dgv.Rows[rowError[i]].Cells[colError[i]].Style.BackColor = Color.IndianRed;
+                        dgv.Rows[rowError[i]].Cells[colError[i]].Style.ForeColor = Color.White;
                     }
                     MessageBox.Show("Bạn phải nhập số nguyên dương vào các ô sai", "Thông báo", MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
@@ -227,7 +306,10 @@ namespace CS_DL_DPT
         // Button reset
         private void btnReset_Click(object sender, EventArgs e)
         {
-            resetDgv(dgvIn);
+            if (checkRadio(rdoTB1))
+                resetDgv(dgvIn);
+            else
+                resetDgv(dgvOut1);
         }
 
         // reset dgv
@@ -248,9 +330,10 @@ namespace CS_DL_DPT
         // Insert Column
         private void insertColumn(DataGridView dgv, int position)
         {
-            int col = dgvIn.CurrentCell.ColumnIndex;    // Phải lấy col ở bảng dgvIn
+            int col = dgvIn.CurrentCell.ColumnIndex;
             DataGridViewTextBoxColumn clm = new DataGridViewTextBoxColumn();
-            clm.HeaderText = "D" + dgv.ColumnCount;
+            
+            clm.HeaderText = "D" + (dgv.ColumnCount + 1);
             clm.Width = 75;
             clm.SortMode = DataGridViewColumnSortMode.Programmatic;
             if (position == -1)     // Insert Column to left
@@ -262,9 +345,9 @@ namespace CS_DL_DPT
         // Insert Row
         private void insertRow(DataGridView dgv, int position)
         {
-            int row = dgvIn.CurrentCell.RowIndex;
+            int row = dgv.CurrentCell.RowIndex;
             DataGridViewRow rowClone = (DataGridViewRow)dgv.Rows[0].Clone();
-            rowClone.HeaderCell.Value = "T" + dgv.RowCount;
+            rowClone.HeaderCell.Value = "T" + dgv.RowCount + 1;
             if (position == 1)   // Insert Row to top
                 dgv.Rows.Insert(row, rowClone);
             else                // Insert Row to bottom
@@ -274,14 +357,14 @@ namespace CS_DL_DPT
         // Remove Column
         private void removeColumn(DataGridView dgv)
         {
-            int col = dgvIn.CurrentCell.ColumnIndex;
+            int col = dgv.CurrentCell.ColumnIndex;
             dgv.Columns.RemoveAt(col);
         }
 
         // Remove Row
         private void removeRow(DataGridView dgv)
         {
-            int row = dgvIn.CurrentCell.RowIndex;
+            int row = dgv.CurrentCell.RowIndex;
             dgv.Rows.RemoveAt(row);
         }
 
@@ -392,11 +475,13 @@ namespace CS_DL_DPT
                 for (int j = 0; j < column; j++)
                     if (data[i][j] == 0)
                         dem++;
-                doQuanTrong[i] = Math.Round(Math.Log10((float)column / (column - dem)), 2);
+                doQuanTrong[i] = Math.Round(Math.Log10((double)column / (column - dem)), 2);
             }
+
+            // theo chiều ngang
             for (int i = 0; i < row; i++)
                 for (int j = 0; j < column; j++)
-                    kq[i][j] = Math.Round(data[i][j] * doQuanTrong[i], 2);
+                    kq[i][j] = Math.Round(data[i][j] * doQuanTrong[i], 2, MidpointRounding.AwayFromZero);
 
             return kq;
         }
@@ -441,23 +526,37 @@ namespace CS_DL_DPT
                     Excel._Worksheet sheet = wb.Sheets[1];  // Lựa chọn sheet
                     Excel.Range range = sheet.UsedRange;    // Tham chiếu đến tất cả vùng dl có trong sheet
 
-                    // Xuất ra mảng
+                    // Set dl vào DGV
                     int rows = range.Rows.Count;
                     int cols = range.Columns.Count;
+                    string[] colHeader = new string[cols - 1];
+                    string[] rowHeader = new string[rows - 1];
+
+                    for (int c = 2; c <= cols; c++)
+                        colHeader[c - 2] = range.Cells[1, c].Value.ToString();
+                    for (int r = 2; r <= rows; r++)
+                        rowHeader[r - 2] = range.Cells[r, 1].Value.ToString();
+
                     array = new double[rows - 1][];
                     for (int i = 0; i < rows - 1; i++)
                         array[i] = new double[cols - 1];
-   
+
                     for (int r = 2; r <= rows; r++)
                         for (int c = 2; c <= cols; c++)
                             array[r - 2][c - 2] = double.Parse(range.Cells[r, c].Value.ToString());
+                       
+                    setRowColumnHeader(dgvOut1, rows - 1, cols - 1, colHeader, rowHeader); // Phải trừ dòng Header và cột Header ở Excel
+                    setRowColumnHeader(dgvOut2, rows - 1, cols - 1, colHeader, rowHeader);
 
-                    setRowColumnHeader(dgvIn, rows - 1, cols - 1);   // Phải trừ dòng Header và cột Header ở Excel
-                    setRowColumnHeader(dgvOut1, rows - 1, cols - 1);
-                    setRowColumnHeader(dgvOut2, rows - 1, cols - 1);
-                    
-                    setValueToCells(dgvIn, array);
+                    if (checkRadio(rdoTB1))
+                    {
+                        setRowColumnHeader(dgvIn, rows - 1, cols - 1, colHeader, rowHeader);
+                        setValueToCells(dgvIn, array);
+                    }
+                    else
+                        setValueToCells(dgvOut1, array);
                 }
+
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message, "Thông báo", MessageBoxButtons.OK,
@@ -486,21 +585,23 @@ namespace CS_DL_DPT
             {
                 Excel.Application app = new Excel.Application();    // Tạo Excel App
                 Excel.Workbook wb = app.Workbooks.Add(Type.Missing);    // Tạo 1 workbook
-                //Excel.Workbook wb2 = app.Workbooks.Add(Type.Missing);    // Tạo 1 workbook
+
                 Excel.Worksheet sheet1 = null;   // Tạo sheet
                 Excel.Worksheet sheet2 = null;
                 try
                 {
                     // Đọc dl từ dataGridView
-                    sheet1 = wb.Sheets.Add();
-                    sheet1 = wb.ActiveSheet;
-                    sheet1.Name = "Bảng tần suất sau chuẩn hóa";
-                    exportExcel(dgvOut1, sheet1, "Bảng tần số sau chuẩn hóa");
-
+                    if (checkRadio(rdoTB1))
+                    {
+                        sheet1 = wb.Sheets.Add();
+                        sheet1 = wb.ActiveSheet;
+                        sheet1.Name = "Bảng tần suất sau chuẩn hóa";
+                        exportExcel(dgvOut1, sheet1, "Bảng tần số sau chuẩn hóa", rdoTB1);
+                    }
                     sheet2 = wb.Sheets.Add();
                     sheet2 = wb.ActiveSheet;
                     sheet2.Name = "Bảng vector trọng số";
-                    exportExcel(dgvOut2, sheet2, "Bảng vector trọng số");
+                    exportExcel(dgvOut2, sheet2, "Bảng vector trọng số", rdoTB1);
 
                     // Save lại
                     wb.SaveAs(fsave.FileName);
@@ -525,12 +626,15 @@ namespace CS_DL_DPT
             }
         }
 
-        private static void exportExcel(DataGridView dgv, Excel.Worksheet sheet, string tableName)
+        private static void exportExcel(DataGridView dgv, Excel.Worksheet sheet, string tableName, RadioButton rdoTB1)
         {
             int column = dgv.ColumnCount;   // Lấy số cột của dgvOut1 or dgvOut2 => 6
             int row = dgv.RowCount;     // 5
             // Gộp các ô từ [1, 1] đến [1, column+1] lại với nhau để đặt tên bảng. Cộng thêm 1 là do dgv + thêm column header
-            sheet.Range[sheet.Cells[1, 1], sheet.Cells[1, column + 1]].Merge();
+            if(dgv.Name == "dgvOut1")
+                sheet.Range[sheet.Cells[1, 1], sheet.Cells[1, column + 1]].Merge();
+            else
+                sheet.Range[sheet.Cells[1, 1], sheet.Cells[1, column]].Merge();
             sheet.Cells[1, 1].Value = tableName;
             sheet.Cells[1, 1].Font.Bold = true;
             sheet.Cells[1, 1].Font.Size = 20;
@@ -539,31 +643,52 @@ namespace CS_DL_DPT
             // Sinh tiêu đề
             for (int i = 0; i <= column; i++)
             {
-                if (i == 0)
-                    sheet.Cells[3, 1] = "";
+                int vt;
+                if (dgv.Name == "dgvOut1")
+                {
+                    if (i == 0)
+                        sheet.Cells[3, 1] = "";
+                    else
+                        sheet.Cells[3, i + 1] = dgv.Columns[i - 1].HeaderCell.Value.ToString();
+                    sheet.Cells[3, i + 1].Font.Bold = true;
+                    sheet.Cells[3, i + 1].Font.Size = 14;
+                    sheet.Cells[3, i + 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                    sheet.Cells[3, i + 1].Borders.Weight = Excel.XlBorderWeight.xlThin; // Kẻ ô
+                }
                 else
-                    sheet.Cells[3, i + 1] = dgv.Columns[i - 1].HeaderCell.Value.ToString();
-                sheet.Cells[3, i + 1].Font.Bold = true;
-                sheet.Cells[3, i + 1].Font.Size = 14;
-                sheet.Cells[3, i + 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-                sheet.Cells[3, i + 1].Borders.Weight = Excel.XlBorderWeight.xlThin; // Kẻ ô
+                {
+                    if (i == column)
+                        break;
+                    sheet.Cells[3, i + 1] = dgv.Columns[i].HeaderCell.Value.ToString();
+                    sheet.Cells[3, i + 1].Font.Bold = true;
+                    sheet.Cells[3, i + 1].Font.Size = 14;
+                    sheet.Cells[3, i + 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                    sheet.Cells[3, i + 1].Borders.Weight = Excel.XlBorderWeight.xlThin; // Kẻ ô
+                }
             }
 
             // Sinh dữ liệu
             for (int i = 0; i < row; i++)
             {
-                sheet.Cells[i + 4, 1] = dgv.Rows[i].HeaderCell.Value.ToString();
-                sheet.Cells[i + 4, 1].Font.Bold = true;
-                sheet.Cells[i + 4, 1].Font.Size = 14;
-                sheet.Cells[i + 4, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-                sheet.Cells[i + 4, 1].Borders.Weight = Excel.XlBorderWeight.xlThin;
-
+                if (dgv.Name == "dgvOut1")
+                {
+                    sheet.Cells[i + 4, 1] = dgv.Rows[i].HeaderCell.Value.ToString();
+                    sheet.Cells[i + 4, 1].Font.Bold = true;
+                    sheet.Cells[i + 4, 1].Font.Size = 14;
+                    sheet.Cells[i + 4, 1].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                    sheet.Cells[i + 4, 1].Borders.Weight = Excel.XlBorderWeight.xlThin;
+                }
                 for (int j = 0; j < column; j++)
                 {
-                    sheet.Cells[i + 4, j + 2] = dgv.Rows[i].Cells[j].Value.ToString();
-                    sheet.Cells[i + 4, j + 2].Font.Bold = true;
-                    sheet.Cells[i + 4, j + 2].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-                    sheet.Cells[i + 4, j + 2].Borders.Weight = Excel.XlBorderWeight.xlThin;
+                    int vt;
+                    if (dgv.Name == "dgvOut1")
+                        vt = j + 2;
+                    else
+                        vt = j + 1;
+                    sheet.Cells[i + 4, vt] = dgv.Rows[i].Cells[j].Value.ToString();
+                    sheet.Cells[i + 4, vt].Font.Bold = true;
+                    sheet.Cells[i + 4, vt].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                    sheet.Cells[i + 4, vt].Borders.Weight = Excel.XlBorderWeight.xlThin;
                 }
             }
         }
