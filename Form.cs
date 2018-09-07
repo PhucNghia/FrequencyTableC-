@@ -24,6 +24,8 @@ namespace CS_DL_DPT
             setRowColumnHeader(dgvOut1, 6, 6);
             setRowColumnHeader(dgvOut2, 6, 6);
             setValueToCells(dgvIn, input());
+            //if (rdoTB1.Checked)
+            //    MessageBox.Show("change load");
         }
 
         // Fake data
@@ -81,11 +83,14 @@ namespace CS_DL_DPT
                 setRowColumnHeader(dgvOut2, row, col);
             }
             else if (check == -1)
-                MessageBox.Show("Hàng và cột phải là số nguyên dương > 0", "Thông báo", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                MessageBox.Show("Row Count and Column Count must be interger and greter than 0", 
+                                "Error", 
+                                MessageBoxButtons.OK, 
+                                MessageBoxIcon.Error);
             else
-                MessageBox.Show("Giới hạn hàng <= 5000 và cột <= 1000", "Thông báo", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                MessageBox.Show("Row limit <= 5000 and Column limit <= 1000", "Error", 
+                                MessageBoxButtons.OK, 
+                                MessageBoxIcon.Error);
         }
 
         // Format Row and Column header
@@ -158,8 +163,8 @@ namespace CS_DL_DPT
                 {
                     try
                     {
-                        dgvIn.Rows[i].Cells[j].Style.ForeColor = Color.Black;
-                        dgvIn.Rows[i].Cells[j].Style.BackColor = Color.Ivory;
+                        //dgvIn.Rows[i].Cells[j].Style.ForeColor = Color.Black;
+                        //dgvIn.Rows[i].Cells[j].Style.BackColor = Color.Ivory;
                         string s = dgv.Rows[i].Cells[j].Value.ToString();
                         kq[i][j] = int.Parse(s);
                         if (kq[i][j] < 0)
@@ -185,6 +190,58 @@ namespace CS_DL_DPT
             return kq;
         }
 
+        // ============================= XỬ LÝ LỰA CHON BẢNG =========================================
+
+        private void rdoTB1_MouseHover(object sender, EventArgs e)
+        {
+            ToolTip tt = new ToolTip();
+            tt.SetToolTip(rdoTB1, "Bảng tần số");
+        }
+
+        private void rdoTB2_MouseHover(object sender, EventArgs e)
+        {
+            ToolTip tt = new ToolTip();
+            tt.SetToolTip(rdoTB2, "Bảng tần số sau chuẩn hóa");
+        }
+
+        private void disabledTable(DataGridView dgv1, DataGridView dgv2)
+        {
+            for (int i = 0; i < dgv1.RowCount; i++)
+                for (int j = 0; j < dgv1.ColumnCount; j++)
+                {
+                    dgv1.Rows[i].Cells[j].Value = "";
+                    dgv1.DefaultCellStyle.BackColor = Color.LightGray;
+                }
+
+            dgv1.ReadOnly = true;
+            dgv1.DefaultCellStyle.SelectionBackColor = Color.LightGray;
+
+            dgv2.ReadOnly = false;
+            dgv2.DefaultCellStyle.SelectionBackColor = Color.Moccasin;
+        }
+        
+        private void enabledTable(DataGridView dgv1, DataGridView dgv2)
+        {
+            for (int i = 0; i < dgv1.RowCount; i++)
+                for (int j = 0; j < dgv1.ColumnCount; j++)
+                    dgv1.DefaultCellStyle.BackColor = Color.Ivory;
+
+            dgv1.ReadOnly = false;
+            dgv1.DefaultCellStyle.SelectionBackColor = Color.Moccasin;
+
+            dgv2.ReadOnly = true;
+            dgv2.DefaultCellStyle.SelectionBackColor = Color.PaleTurquoise;
+        }
+
+        private void rdoTB1_CheckedChanged(object sender, EventArgs e)
+        {
+            bool valCheckTB1 = rdoTB1.Checked;      // DataGridView Input
+            bool valCheckTB2 = rdoTB2.Checked;      // DataGridView Output1
+            if (!valCheckTB1)
+                disabledTable(dgvIn, dgvOut1);
+            else
+                enabledTable(dgvIn, dgvOut1);
+        }
         //===================== XỬ LÝ BUTTON ======================
 
         // Button submit
@@ -213,13 +270,17 @@ namespace CS_DL_DPT
                         dgvIn.Rows[rowError[i]].Cells[colError[i]].Style.BackColor = Color.IndianRed;
                         dgvIn.Rows[rowError[i]].Cells[colError[i]].Style.ForeColor = Color.White;
                     }
-                    MessageBox.Show("Bạn phải nhập số nguyên dương vào các ô sai", "Thông báo", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    MessageBox.Show("Value must be greater than 0 and is not empty", 
+                                    "Error", 
+                                    MessageBoxButtons.OK, 
+                                    MessageBoxIcon.Error);
                 }
                 if (flagError == -1)
                 {
-                    MessageBox.Show("Số dòng và số cột phải lớn hơn 0", "Thông báo", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    MessageBox.Show("Invalid rows count or columns count", 
+                                    "Error", 
+                                    MessageBoxButtons.OK, 
+                                    MessageBoxIcon.Error);
                 }
             }
         }
@@ -298,12 +359,12 @@ namespace CS_DL_DPT
                     dgvIn.CurrentCell = dgvIn.Rows[currentRow].Cells[currentColumn];
 
                     ContextMenuStrip m = new ContextMenuStrip();
-                    m.Items.Add("Thêm cột trước").Name = "insert_col_before";
-                    m.Items.Add("Thêm cột sau").Name = "insert_col_after";
-                    m.Items.Add("Thêm dòng trước").Name = "insert_row_before";
-                    m.Items.Add("Thêm dòng sau").Name = "insert_row_after";
-                    m.Items.Add("Xóa cột").Name = "remove_col";
-                    m.Items.Add("Xóa dòng").Name = "remove_row";
+                    m.Items.Add("Insert column before").Name = "insert_col_before";
+                    m.Items.Add("Insert column after").Name = "insert_col_after";
+                    m.Items.Add("Insert row before").Name = "insert_row_before";
+                    m.Items.Add("Insert row after").Name = "insert_row_after";
+                    m.Items.Add("Delete column").Name = "remove_col";
+                    m.Items.Add("Delete row").Name = "remove_row";
 
                     m.Show(dgvIn, new Point(e.X, e.Y));
                     m.ItemClicked += new ToolStripItemClickedEventHandler(menuItemClicked);
@@ -460,8 +521,10 @@ namespace CS_DL_DPT
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, "Thông báo", MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                    MessageBox.Show(ex.Message, 
+                                    "Error", 
+                                    MessageBoxButtons.OK, 
+                                    MessageBoxIcon.Warning);
                 }
                 finally
                 {
@@ -471,8 +534,10 @@ namespace CS_DL_DPT
             }
             else
             {
-                MessageBox.Show("Bạn không chọn tệp tin nào!", "Thông báo", MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                MessageBox.Show("You do not choose any file", 
+                                "Warning", 
+                                MessageBoxButtons.OK, 
+                                MessageBoxIcon.Warning);
             }
         }
 
@@ -504,13 +569,15 @@ namespace CS_DL_DPT
 
                     // Save lại
                     wb.SaveAs(fsave.FileName);
-                    MessageBox.Show("Lưu thành công!", "Thông báo", MessageBoxButtons.OK,
+                    MessageBox.Show("Done!", "Information", MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    MessageBox.Show("Không có dữ liệu", "Thông báo", MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                    MessageBox.Show("Invalid file name", 
+                                    "Error", 
+                                    MessageBoxButtons.OK, 
+                                    MessageBoxIcon.Warning);
                 }
                 finally
                 {
@@ -520,8 +587,10 @@ namespace CS_DL_DPT
             }
             else
             {
-                MessageBox.Show("Bạn chưa ghi tập tin!", "Thông báo", MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                MessageBox.Show("You do not save file!", 
+                                "Warning", 
+                                MessageBoxButtons.OK, 
+                                MessageBoxIcon.Warning);
             }
         }
 
@@ -565,6 +634,30 @@ namespace CS_DL_DPT
                     sheet.Cells[i + 4, j + 2].HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
                     sheet.Cells[i + 4, j + 2].Borders.Weight = Excel.XlBorderWeight.xlThin;
                 }
+            }
+        }
+
+        // [NamPH 07/09/18] handle invalid value for dgvIn
+        private void dgvIn_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            int value;
+            string valueString = "";
+            try
+            {
+                valueString = dgvIn[e.ColumnIndex, e.RowIndex].Value.ToString();
+            }
+            catch (NullReferenceException)
+            {
+                
+            }
+            
+            if (!int.TryParse(valueString, out value))
+            {
+                MessageBox.Show("Invalid value",
+                            "Error",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                dgvIn[e.ColumnIndex, e.RowIndex].Value = "";
             }
         }
     }

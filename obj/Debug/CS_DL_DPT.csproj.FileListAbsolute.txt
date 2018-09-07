@@ -9,3 +9,25 @@ D:\NAM 4 KY 1\CS_DU_LIEU_DPT\CS_DL_DPT\CS_DL_DPT\obj\Debug\CS_DL_DPT.exe
 D:\NAM 4 KY 1\CS_DU_LIEU_DPT\CS_DL_DPT\CS_DL_DPT\obj\Debug\CS_DL_DPT.pdb
 D:\NAM 4 KY 1\CS_DU_LIEU_DPT\CS_DL_DPT\CS_DL_DPT\obj\Debug\CS_DL_DPT.Form.resources
 D:\NAM 4 KY 1\CS_DU_LIEU_DPT\CS_DL_DPT\CS_DL_DPT\obj\Debug\CS_DL_DPT.csproj.ResolveComReference.cache
+D:\NAM 4 KY 1\WIN_FORM\CS_DL_DPT-TEST\bin\Debug\CS_DL_DPT.exe.config
+D:\NAM 4 KY 1\WIN_FORM\CS_DL_DPT-TEST\bin\Debug\CS_DL_DPT.exe
+D:\NAM 4 KY 1\WIN_FORM\CS_DL_DPT-TEST\bin\Debug\CS_DL_DPT.pdb
+D:\NAM 4 KY 1\WIN_FORM\CS_DL_DPT-TEST\obj\Debug\CS_DL_DPT.csprojAssemblyReference.cache
+D:\NAM 4 KY 1\WIN_FORM\CS_DL_DPT-TEST\obj\Debug\CS_DL_DPT.csproj.ResolveComReference.cache
+D:\NAM 4 KY 1\WIN_FORM\CS_DL_DPT-TEST\obj\Debug\CS_DL_DPT.Form.resources
+D:\NAM 4 KY 1\WIN_FORM\CS_DL_DPT-TEST\obj\Debug\CS_DL_DPT.Properties.Resources.resources
+D:\NAM 4 KY 1\WIN_FORM\CS_DL_DPT-TEST\obj\Debug\CS_DL_DPT.csproj.GenerateResource.cache
+D:\NAM 4 KY 1\WIN_FORM\CS_DL_DPT-TEST\obj\Debug\CS_DL_DPT.csproj.CoreCompileInputs.cache
+D:\NAM 4 KY 1\WIN_FORM\CS_DL_DPT-TEST\obj\Debug\CS_DL_DPT.exe
+D:\NAM 4 KY 1\WIN_FORM\CS_DL_DPT-TEST\obj\Debug\CS_DL_DPT.pdb
+D:\STUDY\C#\clone\FrequencyTableCSharp\bin\Debug\CS_DL_DPT.exe.config
+D:\STUDY\C#\clone\FrequencyTableCSharp\bin\Debug\CS_DL_DPT.exe
+D:\STUDY\C#\clone\FrequencyTableCSharp\bin\Debug\CS_DL_DPT.pdb
+D:\STUDY\C#\clone\FrequencyTableCSharp\obj\Debug\CS_DL_DPT.csprojAssemblyReference.cache
+D:\STUDY\C#\clone\FrequencyTableCSharp\obj\Debug\CS_DL_DPT.csproj.ResolveComReference.cache
+D:\STUDY\C#\clone\FrequencyTableCSharp\obj\Debug\CS_DL_DPT.Form.resources
+D:\STUDY\C#\clone\FrequencyTableCSharp\obj\Debug\CS_DL_DPT.Properties.Resources.resources
+D:\STUDY\C#\clone\FrequencyTableCSharp\obj\Debug\CS_DL_DPT.csproj.GenerateResource.cache
+D:\STUDY\C#\clone\FrequencyTableCSharp\obj\Debug\CS_DL_DPT.csproj.CoreCompileInputs.cache
+D:\STUDY\C#\clone\FrequencyTableCSharp\obj\Debug\CS_DL_DPT.exe
+D:\STUDY\C#\clone\FrequencyTableCSharp\obj\Debug\CS_DL_DPT.pdb
